@@ -77,14 +77,29 @@ class SinglyLinkedList:
     # ToDo: Add a kind of initializer_list? maybe that *args / **kwargs thingy?
     def __init__(self):
         self.head = None
+        self.iter_elem = self.head
 
     def at(self, index):
         if self.head is None:
             raise IndexError("SinglyLinkedList.at(): list is empty!")
         return self.head.at(index)
 
+    def __len__(self):
+        return 0 if self.head is None else self.head.length
+
     def __getitem__(self, item):
         return self.at(item)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.iter_elem is None:
+            raise StopIteration()
+        else:
+            out = self.iter_elem.data
+            self.iter_elem = self.iter_elem.next_node
+            return out
 
     def empty(self):
         return self.head is None
@@ -94,6 +109,7 @@ class SinglyLinkedList:
             if index != 0:
                 raise IndexError("SinglyLinkedList.add(): index too high!")
             self.head = SinglyNode(data)
+            self.iter_elem = self.head
         else:
             self.head.insert(data, index)
 
@@ -103,6 +119,7 @@ class SinglyLinkedList:
     def add_back(self, data):
         if self.head is None:
             self.head = SinglyNode(data)
+            self.iter_elem = self.head
         else:
             self.add(data, self.head.length)
 
@@ -113,7 +130,10 @@ class SinglyLinkedList:
             if index != 0:
                 raise IndexError('SinglyLinkedList.merge(): This list was previously empty, and merge index was not 0!')
             self.head = other.head
+            self.iter_elem = self.head
         elif index < 0 or index > self.head.length:
             raise IndexError('SinglyLinkedList.merge(): index too low/high!')
         else:
             self.head = self.head.merge(other.head, index)
+            self.iter_elem = self.head
+
