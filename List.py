@@ -137,3 +137,18 @@ class SinglyLinkedList:
             self.head = self.head.merge(other.head, index)
             self.iter_elem = self.head
 
+    # removes the first occurrence of the specified element and returns True if the element was found in the list
+    def remove_elem(self, data):
+        if self.head is None:
+            return False
+        if self.head.data == data:
+            self.head = self.head.next_node
+            return True
+        temp = self.head
+        while temp.next_node is not None:
+            if temp.next_node.data == data:
+                temp.next_node = temp.next_node.next_node
+                return True
+            temp = temp.next_node
+        return False
+
