@@ -17,7 +17,7 @@ class SinglyNode:
         if data is None:
             raise ValueError("SinglyLinkedList.insert(): data is None!")
         if index > self.length:
-            raise IndexError("IndexOutOfBounds!")
+            raise IndexError("SinglyLinkedList.insert(): IndexOutOfBounds!")
         if index == 0:
             temp = SinglyNode(self.data, self.next_node)
             self.next_node = temp
@@ -51,23 +51,26 @@ class SinglyNode:
                 return False
 
     # merges the two lists and returns the new head
-    def merge(self, otherHead, index=0):
-        if otherHead is None:
+    def merge(self, other_head, index=0):
+        if other_head is None:
             return self
         if index < 0 or index > self.length:
             raise IndexError('SinglyNode.merge: index too low/high!')
         if index == 0:
-            otherHead.length += self.length
-            otherHead.insert(self, otherHead.length)
-            return otherHead
-        elif self.next_node is None:
-            self.length += otherHead.length
-            self.next_node = otherHead
-            return self
+            temp = other_head
+            while temp.next_node is not None:
+                temp.length += self.length
+                temp = temp.next_node
+            temp.length += self.length
+            temp.next_node = self
+            return other_head
         else:
-            self.next_node.merge(otherHead, index-1)
+            self.length += other_head.length
+            if self.next_node is None:
+                self.next_node = other_head
+            else:
+                self.next_node = self.next_node.merge(other_head, index - 1)
             return self
-
 
 
 class SinglyLinkedList:
@@ -113,5 +116,4 @@ class SinglyLinkedList:
         elif index < 0 or index > self.head.length:
             raise IndexError('SinglyLinkedList.merge(): index too low/high!')
         else:
-            self.head = self.head.merge(other.head)
-
+            self.head = self.head.merge(other.head, index)
