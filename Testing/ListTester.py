@@ -10,15 +10,18 @@ def random_list(lower_bound=0, upper_bound=100, size=10):
 
 
 def content_equal(solution, answer):
+    # print(solution, answer)
+    # print('{0} vs {1}'.format(len(solution), len(answer)))
     if len(solution) != len(answer):
         return False
     for i, x in enumerate(answer):
         if solution[i] != answer.at(i) or x != answer.at(i):
+            # print('{0} vs {1} vs {2}'.format(solution[i], answer.at(i), x))
             return False
     return True
 
 
-class TestAddMethods(unittest.TestCase):
+class TestSinglyLinkedList(unittest.TestCase):
     def test_add_last(self):
         test_struct = TestClass()
         test_data = []
@@ -73,13 +76,13 @@ class TestAddMethods(unittest.TestCase):
     def test_delete_index(self):
         data = random_list()
         test_list = TestClass(data)
-        print()
+        # print()
         while len(data) > 0:
             rand_index = random.randint(0, len(data) - 1)
             data.remove(data[rand_index])
             test_list.remove_index(rand_index)
-            print(data, test_list)
-            # self.assertTrue(content_equal(data, test_list))
+            # print(data, test_list)
+            self.assertTrue(content_equal(data, test_list))
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,29 +4,29 @@ class SinglyNode:
             raise ValueError("SinglyLinkedList.__init__(): data is None!")
         self.data = data
         self.next_node = next_node
-        self.length = 1 if next_node is None else next_node.length + 1
 
     def at(self, index):
         if index == 0:
             return self.data
-        if self.next_node is None or index < 0 or index >= self.length:
+        if self.next_node is None or index < 0:
             raise IndexError("SinglyLinkedList.at(): index too low/high!")
         return self.next_node.at(index-1)
 
     def insert(self, data, index):
         if data is None:
             raise ValueError("SinglyNode.insert(): data is None!")
-        if 0 < index > self.length:
-            raise IndexError("SinglyNode.insert(): IndexOutOfBounds!")
+        if index < 0:
+            raise IndexError("SinglyNode.insert(): index too low!")
         if index == 0:
             temp = SinglyNode(self.data, self.next_node)
             self.next_node = temp
             self.data = data
         elif index == 1:
             self.next_node = SinglyNode(data, self.next_node)
+        elif self.next_node is None:
+            raise IndexError("SinglyNode.insert(): index too high!")
         else:
             self.next_node.insert(data, index - 1)
-        self.length += 1
 
     # call recursively until we find data, if found rotate out deleted data to last node and return true,
     # signaling successful removal, so that other nodes decrease length accordingly
@@ -44,20 +44,20 @@ class SinglyNode:
     def merge(self, other_head, index=0):
         if other_head is None:
             return self
-        if index < 0 or index > self.length:
+        if index < 0:
             raise IndexError('SinglyNode.merge: index too low/high!')
         if index == 0:
             temp = other_head
             while temp.next_node is not None:
-                temp.length += self.length
                 temp = temp.next_node
-            temp.length += self.length
             temp.next_node = self
             return other_head
         else:
-            self.length += other_head.length
             if self.next_node is None:
-                self.next_node = other_head
+                if index == 1:
+                    self.next_node = other_head
+                else:
+                    raise IndexError("SinglyNode.merge(): index too high!")
             else:
                 self.next_node = self.next_node.merge(other_head, index - 1)
             return self
@@ -73,18 +73,20 @@ class SinglyNode:
 class SinglyLinkedList:
     def __init__(self, initializer_list=None):
         self.head = None
+        self.length = 0
         if initializer_list is not None:
             for x in reversed(initializer_list):
                 self.head = SinglyNode(x, self.head)
+            self.length = len(initializer_list)
         self.iter_elem = self.head
 
     def at(self, index):
-        if self.head is None:
+        if self.empty():
             raise IndexError("SinglyLinkedList.at(): list is empty!")
         return self.head.at(index)
 
     def __len__(self):
-        return 0 if self.head is None else self.head.length
+        return self.length
 
     def __getitem__(self, item):
         return self.at(item)
@@ -105,13 +107,16 @@ class SinglyLinkedList:
         return self.head is None
 
     def add(self, data, index):
+        if index < 0 or index > self.length:
+            raise IndexError("SinglyLinkedList.add(): index too high! Is {0}, length is {1}".format(index, self.length))
         if self.head is None:
             if index != 0:
-                raise IndexError("SinglyLinkedList.add(): index too high!")
+                raise IndexError("SinglyLinkedList.add(): index too high! Is {0}, length is {1}".format(index, self.length))
             self.head = SinglyNode(data)
             self.iter_elem = self.head
         else:
             self.head.insert(data, index)
+        self.length += 1
 
     def add_front(self, data):
         self.add(data, 0)
@@ -120,8 +125,9 @@ class SinglyLinkedList:
         if self.head is None:
             self.head = SinglyNode(data)
             self.iter_elem = self.head
+            self.length = 1
         else:
-            self.add(data, self.head.length)
+            self.add(data, self.length)
 
     def merge(self, other, index=0):
         if other is None:
@@ -131,24 +137,27 @@ class SinglyLinkedList:
                 raise IndexError('SinglyLinkedList.merge(): This list was previously empty, and merge index was not 0!')
             self.head = other.head
             self.iter_elem = self.head
-        elif index < 0 or index > self.head.length:
+            self.length = other.length
+        elif index < 0 or index > self.length:
             raise IndexError('SinglyLinkedList.merge(): index too low/high!')
         else:
             self.head = self.head.merge(other.head, index)
             self.iter_elem = self.head
+            self.length += other.length
 
     # removes the first occurrence of the specified element and returns True if the element was found in the list
     def remove_elem(self, data):
         if self.head is None:
             return False
         self.head, found_data = self.head.remove(data)
+        self.iter_elem = self.head
+        if found_data:
+            self.length -= 1
         return found_data
 
     # this runs in O(2 * n), whereas it could run in O(n) if the implement it separately
     def remove_index(self, index):
-        if self.head is None:
-            return False
-        self.head, found_data = self.head.remove(self[index])
+        found_data = self.remove_elem(self[index])
         return found_data
 
     def __str__(self):
