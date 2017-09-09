@@ -15,9 +15,9 @@ class SinglyNode:
 
     def insert(self, data, index):
         if data is None:
-            raise ValueError("SinglyLinkedList.insert(): data is None!")
-        if index > self.length:
-            raise IndexError("SinglyLinkedList.insert(): IndexOutOfBounds!")
+            raise ValueError("SinglyNode.insert(): data is None!")
+        if 0 < index > self.length:
+            raise IndexError("SinglyNode.insert(): IndexOutOfBounds!")
         if index == 0:
             temp = SinglyNode(self.data, self.next_node)
             self.next_node = temp
@@ -30,25 +30,15 @@ class SinglyNode:
 
     # call recursively until we find data, if found rotate out deleted data to last node and return true,
     # signaling successful removal, so that other nodes decrease length accordingly
+    # returns new_head, bool_found_data
     def remove(self, data):
         if data == self.data:
-            current = self
-            while current.next_node is not None:
-                current.data = current.next_node.data
-                current.length -= 1
-                if current.length == 0:
-                    current.next_node = None
-                else:
-                    current = current.next_node
-            return True
+            return self.next_node, True
         else:
             if self.next_node is None:
-                return False
-            elif self.next_node.remove(data):
-                self.length -= 1
-                return True
-            else:
-                return False
+                return self, False
+            self.next_node, found_data = self.next_node.remove(data)
+            return self, found_data
 
     # merges the two lists and returns the new head
     def merge(self, other_head, index=0):
@@ -72,11 +62,20 @@ class SinglyNode:
                 self.next_node = self.next_node.merge(other_head, index - 1)
             return self
 
+    def __repr__(self):
+        out = repr(self.data)
+        if self.next_node is None:
+            return out
+        out += ', ' + repr(self.next_node)
+        return out
+
 
 class SinglyLinkedList:
-    # ToDo: Add a kind of initializer_list? maybe that *args / **kwargs thingy?
-    def __init__(self):
+    def __init__(self, initializer_list=None):
         self.head = None
+        if initializer_list is not None:
+            for x in reversed(initializer_list):
+                self.head = SinglyNode(x, self.head)
         self.iter_elem = self.head
 
     def at(self, index):
@@ -95,6 +94,7 @@ class SinglyLinkedList:
 
     def __next__(self):
         if self.iter_elem is None:
+            self.iter_elem = self.head
             raise StopIteration()
         else:
             out = self.iter_elem.data
@@ -141,14 +141,19 @@ class SinglyLinkedList:
     def remove_elem(self, data):
         if self.head is None:
             return False
-        if self.head.data == data:
-            self.head = self.head.next_node
-            return True
-        temp = self.head
-        while temp.next_node is not None:
-            if temp.next_node.data == data:
-                temp.next_node = temp.next_node.next_node
-                return True
-            temp = temp.next_node
-        return False
+        self.head, found_data = self.head.remove(data)
+        return found_data
+
+    # this runs in O(2 * n), whereas it could run in O(n) if the implement it separately
+    def remove_index(self, index):
+        if self.head is None:
+            return False
+        self.head, found_data = self.head.remove(self[index])
+        return found_data
+
+    def __str__(self):
+        if self.empty():
+            return '[]'
+        out = '[' + repr(self.head) + ']'
+        return out
 

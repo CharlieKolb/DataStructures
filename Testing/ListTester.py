@@ -10,8 +10,10 @@ def random_list(lower_bound=0, upper_bound=100, size=10):
 
 
 def content_equal(solution, answer):
-    for i in range(len(solution)):
-        if solution[i] != answer.at(i):
+    if len(solution) != len(answer):
+        return False
+    for i, x in enumerate(answer):
+        if solution[i] != answer.at(i) or x != answer.at(i):
             return False
     return True
 
@@ -61,14 +63,23 @@ class TestAddMethods(unittest.TestCase):
         self.assertTrue(content_equal(first, test_struct_first))
 
     def test_iteration(self):
-        test_struct = TestClass()
-        for i in random_list():
-            test_struct.add_back(i)
+        test_struct = TestClass(random_list())
         counter = 0
-
         for x in test_struct:
             self.assertEqual(x, test_struct[counter])
             counter += 1
+        self.assertEqual(counter, len(test_struct))
+
+    def test_delete_index(self):
+        data = random_list()
+        test_list = TestClass(data)
+        print()
+        while len(data) > 0:
+            rand_index = random.randint(0, len(data) - 1)
+            data.remove(data[rand_index])
+            test_list.remove_index(rand_index)
+            print(data, test_list)
+            # self.assertTrue(content_equal(data, test_list))
 
 if __name__ == '__main__':
     unittest.main()
