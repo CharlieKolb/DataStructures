@@ -88,7 +88,7 @@ class TestDoublyLinkedList(unittest.TestCase):
     def test_at(self):
         data = random_list()
         test_struct = List.DoublyLinkedList(data)
-        print(data, test_struct)
+        # print(data, test_struct)
         for i, x in enumerate(test_struct):
             self.assertEqual(x, test_struct[i])
 
@@ -138,7 +138,6 @@ class TestDoublyLinkedList(unittest.TestCase):
         index = random.randint(0, len(first) - 1)
         first = first[:index] + second + first[index:]
         test_struct_first.merge(test_struct_second, index)
-        # print()
         self.assertTrue(content_equal(first, test_struct_first))
 
     def test_iteration(self):

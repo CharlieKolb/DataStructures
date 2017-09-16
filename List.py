@@ -274,10 +274,10 @@ class DoublyLinkedList:
         self.length += 1
 
     def add_front(self, data):
-        pass
+        self.add(data=data, index=0)
 
     def add_back(self, data):
-        pass
+        self.add(data=data, index=self.length)
 
     def merge(self, other, index=0):
         pass
