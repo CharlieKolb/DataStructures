@@ -70,6 +70,22 @@ class SinglyNode:
         return out
 
 
+class DoublyNode:
+    def __init__(self, data, prev_node = None, next_node=None):
+        if data is None:
+            raise ValueError("SinglyLinkedList.__init__(): data is None!")
+        self.data = data
+        self.prev_node = prev_node
+        self.next_node = next_node
+
+    def __repr__(self):
+        out = repr(self.data)
+        if self.next_node is None:
+            return out
+        out += ', ' + repr(self.next_node)
+        return out
+
+
 class SinglyLinkedList:
     def __init__(self, initializer_list=None):
         self.head = None
@@ -166,3 +182,68 @@ class SinglyLinkedList:
         out = '[' + repr(self.head) + ']'
         return out
 
+
+class DoublyLinkedList:
+    def __init__(self, initializer_list=None):
+        self.front = None
+        self.back = None
+        self.length = 0
+        if initializer_list is not None:
+            self.length = len(initializer_list)
+            temp = None
+            for x in initializer_list:
+                self.back = DoublyNode(data=x, prev_node=self.back)
+                if temp is None:
+                    temp = self.back
+            self.front = temp
+            self.iter_elem = self.front
+
+    def at(self, index):
+        pass
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, item):
+        pass
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.iter_elem is None:
+            self.iter_elem = self.front
+            raise StopIteration()
+        else:
+            out = self.iter_elem.data
+            self.iter_elem = self.iter_elem.next_node
+            return out
+
+    def empty(self):
+        return self.front is None
+
+    def add(self, data, index):
+        pass
+
+    def add_front(self, data):
+        pass
+
+    def add_back(self, data):
+        pass
+
+    def merge(self, other, index=0):
+        pass
+
+    # removes the first occurrence of the specified element and returns True if the element was found in the list
+    def remove_elem(self, data):
+        pass
+
+    # this runs in O(2 * n), whereas it could run in O(n) if the implement it separately
+    def remove_index(self, index):
+        pass
+
+    def __str__(self):
+        if self.empty():
+            return '[]'
+        out = '[' + repr(self.front) + ']'
+        return out
