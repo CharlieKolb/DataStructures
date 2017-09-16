@@ -199,7 +199,19 @@ class DoublyLinkedList:
             self.iter_elem = self.front
 
     def at(self, index):
-        pass
+        if index < 0 or index >= self.length:
+            raise IndexError("DoublyLinkedList.at: Index too low/high. Length is {0}, index is {1}".
+                             format(self.length, index))
+        if index > self.length//2:
+            temp = self.back
+            for _ in range(self.length - 1, index):
+                temp = temp.prev_node
+            return temp.data
+        else:
+            temp = self.front
+            for _ in range(0, index):
+                temp = temp.next_node
+            return temp.data
 
     def __len__(self):
         return self.length
