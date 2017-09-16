@@ -199,7 +199,8 @@ class DoublyLinkedList:
                 if new_front is None:
                     new_front = self.back
             self.front = new_front
-            self.iter_elem = self.front
+        self.iter_elem = self.front
+        self.iter_front = self.front
 
     def at(self, index):
         if index < 0 or index >= self.length:
@@ -226,6 +227,9 @@ class DoublyLinkedList:
         return self
 
     def __next__(self):
+        if self.iter_front is not self.front:
+            self.iter_elem = self.front
+            self.iter_front = self.front
         if self.iter_elem is None:
             self.iter_elem = self.front
             raise StopIteration()
@@ -238,7 +242,36 @@ class DoublyLinkedList:
         return self.front is None
 
     def add(self, data, index):
-        pass
+        if index < 0 or index > self.length:
+            raise IndexError("DoublyLinkedList.add: Index too low/high. Length is {0}, index is {1}".
+                             format(self.length, index))
+        if index == 0:
+            temp = self.front
+            self.front = DoublyNode(data=data, prev_node=None, next_node=self.front)
+            if temp is not None:
+                temp.prev_node = self.front
+            else:
+                self.back = self.front
+        elif index == self.length:
+            temp = self.back
+            self.back = DoublyNode(data=data, prev_node=self.back, next_node=None)
+            if temp is not None:
+                temp.next_node = self.back
+            else:
+                self.front = self.back
+        else:
+            current_node = None
+            if index > self.length//2:
+                current_node = self.back
+                for _ in range(self.length - 1, index, -1):
+                    current_node = current_node.prev_node
+            else:
+                current_node = self.front
+                for _ in range(0, index):
+                    current_node = current_node.next_node
+            current_node.prev_node.next_node = DoublyNode(data=data, prev_node=current_node.prev_node, next_node=current_node)
+            current_node.prev_node = current_node.prev_node.next_node
+        self.length += 1
 
     def add_front(self, data):
         pass

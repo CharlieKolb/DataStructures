@@ -45,8 +45,9 @@ class TestSinglyLinkedList(unittest.TestCase):
         test_data = []
         # print()
         for i in random_list():
-            test_data.insert(0, i)
-            test_struct.add_front(i)
+            index = random.randint(0, len(test_data))
+            test_data.insert(index, i)
+            test_struct.add(data=i, index=index)
             # print("{0} vs {1}".format(test_data[0], test_struct.at(0)))
         self.assertTrue(content_equal(test_data, test_struct))
 
@@ -121,8 +122,9 @@ class TestDoublyLinkedList(unittest.TestCase):
         test_data = []
         # print()
         for i in random_list():
-            test_data.insert(0, i)
-            test_struct.add_front(i)
+            index = random.randint(0, len(test_data))
+            test_data.insert(index, i)
+            test_struct.add(data=i, index=index)
             # print("{0} vs {1}".format(test_data[0], test_struct.at(0)))
         self.assertTrue(content_equal(test_data, test_struct))
 
