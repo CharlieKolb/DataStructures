@@ -3,7 +3,6 @@ import unittest
 import List
 
 
-
 def random_list(lower_bound=0, upper_bound=100, size=10):
     return random.sample(range(lower_bound, upper_bound), size)
 
@@ -85,6 +84,18 @@ class TestSinglyLinkedList(unittest.TestCase):
 
 
 class TestDoublyLinkedList(unittest.TestCase):
+    def test_at(self):
+        data = random_list()
+        test_struct = List.DoublyLinkedList(data)
+        print(data, test_struct)
+        for i, x in enumerate(test_struct):
+            self.assertEqual(x, test_struct[i])
+
+    def test_length(self):
+        data = random_list()
+        test_struct = List.DoublyLinkedList(data)
+        self.assertEqual(len(test_struct), len(data))
+
     def test_add_last(self):
         test_struct = List.DoublyLinkedList()
         test_data = []

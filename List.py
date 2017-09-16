@@ -71,7 +71,7 @@ class SinglyNode:
 
 
 class DoublyNode:
-    def __init__(self, data, prev_node = None, next_node=None):
+    def __init__(self, data, prev_node=None, next_node=None):
         if data is None:
             raise ValueError("SinglyLinkedList.__init__(): data is None!")
         self.data = data
@@ -190,12 +190,15 @@ class DoublyLinkedList:
         self.length = 0
         if initializer_list is not None:
             self.length = len(initializer_list)
-            temp = None
+            new_front = None
             for x in initializer_list:
-                self.back = DoublyNode(data=x, prev_node=self.back)
-                if temp is None:
-                    temp = self.back
-            self.front = temp
+                temp = self.back
+                self.back = DoublyNode(data=x, prev_node=temp)
+                if temp is not None:
+                    temp.next_node = self.back
+                if new_front is None:
+                    new_front = self.back
+            self.front = new_front
             self.iter_elem = self.front
 
     def at(self, index):
@@ -204,7 +207,7 @@ class DoublyLinkedList:
                              format(self.length, index))
         if index > self.length//2:
             temp = self.back
-            for _ in range(self.length - 1, index):
+            for _ in range(self.length - 1, index, -1):
                 temp = temp.prev_node
             return temp.data
         else:
@@ -217,7 +220,7 @@ class DoublyLinkedList:
         return self.length
 
     def __getitem__(self, item):
-        pass
+        return self.at(item)
 
     def __iter__(self):
         return self
