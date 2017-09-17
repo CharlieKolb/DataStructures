@@ -306,11 +306,40 @@ class DoublyLinkedList:
 
     # removes the first occurrence of the specified element and returns True if the element was found in the list
     def remove_elem(self, data):
-        pass
+        elem_to_remove = None
+        temp = self.front
+        for _ in range(0, len(self)):
+            if temp.data == data:
+                elem_to_remove = temp
+                break
+            # case we didn't find the element
+            if temp.next_node is None:
+                return False
+            temp = temp.next_node
+        # if we get here, we found the element
+        if temp.prev_node is None:
+            # prev_node is None -> we are at the front
+            self.front = temp.next_node
+            if self.front is None:
+                self.back = None
+            else:
+                self.front.prev_node = None
+        elif temp.next_node is None:
+            # next_node is None -> we are at the back
+            self.back = temp.prev_node
+            if self.back is None:
+                self.front = None
+            else:
+                self.back.next_node = None
+        else:
+            temp.prev_node.next_node = temp.next_node
+            temp.next_node.prev_node = temp.prev_node
+        self.length -= 1
+        return True
 
     # this runs in O(2 * n), whereas it could run in O(n) if the implement it separately
     def remove_index(self, index):
-        pass
+        return self.remove_elem(self.at(index))
 
     def __str__(self):
         if self.empty():
