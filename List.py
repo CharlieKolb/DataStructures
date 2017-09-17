@@ -202,20 +202,26 @@ class DoublyLinkedList:
         self.iter_elem = self.front
         self.iter_front = self.front
 
-    def at(self, index):
+    def __node_at(self, index):
         if index < 0 or index >= self.length:
-            raise IndexError("DoublyLinkedList.at: Index too low/high. Length is {0}, index is {1}".
+            raise IndexError("DoublyLinkedList.__node_at: Index too low/high. Length is {0}, index is {1}".
                              format(self.length, index))
+        temp = None
         if index > self.length//2:
             temp = self.back
             for _ in range(self.length - 1, index, -1):
                 temp = temp.prev_node
-            return temp.data
         else:
             temp = self.front
             for _ in range(0, index):
                 temp = temp.next_node
-            return temp.data
+        return temp
+
+    def at(self, index):
+        if index < 0 or index >= self.length:
+            raise IndexError("DoublyLinkedList.at: Index too low/high. Length is {0}, index is {1}".
+                             format(self.length, index))
+        return self.__node_at(index).data
 
     def __len__(self):
         return self.length
@@ -260,15 +266,7 @@ class DoublyLinkedList:
             else:
                 self.front = self.back
         else:
-            current_node = None
-            if index > self.length//2:
-                current_node = self.back
-                for _ in range(self.length - 1, index, -1):
-                    current_node = current_node.prev_node
-            else:
-                current_node = self.front
-                for _ in range(0, index):
-                    current_node = current_node.next_node
+            current_node = self.__node_at(index)
             current_node.prev_node.next_node = DoublyNode(data=data, prev_node=current_node.prev_node, next_node=current_node)
             current_node.prev_node = current_node.prev_node.next_node
         self.length += 1
@@ -280,7 +278,31 @@ class DoublyLinkedList:
         self.add(data=data, index=self.length)
 
     def merge(self, other, index=0):
-        pass
+        if other is None:
+            return
+        if self.front is None:
+            if index != 0:
+                raise IndexError('SinglyLinkedList.merge(): This list was previously empty, and merge index was not 0!')
+            else:
+                self.front = other.front
+                self.back = other.back
+                self.length = other.length
+        else:
+            if index == 0:
+                other.back.next_node = self.front
+                self.front.prev_node = other.back
+                self.front = other.front
+            elif index == self.length:
+                self.back.next_node = other.front
+                other.front.prev_node = self.back
+                self.back = other.back
+            else:
+                c_node = self.__node_at(index)
+                c_node.prev_node.next_node = other.front
+                other.front.prev_node = c_node.prev_node
+                other.back.next_node = c_node
+                c_node.prev_node = other.back
+            self.length += other.length
 
     # removes the first occurrence of the specified element and returns True if the element was found in the list
     def remove_elem(self, data):
